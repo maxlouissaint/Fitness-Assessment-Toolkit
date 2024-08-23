@@ -1,5 +1,12 @@
-def calculate_rmr(gender, weight_kg, height_cm, age):
-    """
+#convert pound to kilogram - return weight in kilogram
+def convert_poundToKilogram(weight_lbs):
+    return weight_lbs / 2.2046
+
+#convert inches to centimeter - return height in centimeter
+def convert_inchesToCentimeters(height_in):
+    return height_in * 2.54
+
+"""
     Calculate the Resting Metabolic Rate (RMR) using the Harris-Benedict equation.
 
     Parameters:
@@ -11,6 +18,11 @@ def calculate_rmr(gender, weight_kg, height_cm, age):
     Returns:
     - rmr: Resting Metabolic Rate in calories/day
     """
+def calculate_rmr(gender, weight_lbs, height_in, age):
+    
+    height_cm = convert_inchesToCentimeters(height_in)
+    weight_kg = convert_poundToKilogram(weight_lbs)
+
     if gender.lower() == 'male':
         rmr = 88.362 + (13.397 * weight_kg) + (4.799 * height_cm) - (5.677 * age)
     elif gender.lower() == 'female':
@@ -20,8 +32,33 @@ def calculate_rmr(gender, weight_kg, height_cm, age):
 
     return rmr
 
-def calculate_dce(rmr, activity_level):
-    """
+"""""
+    Calculate body fat using skinfold equation
+    
+    Parameters:
+    - gender: 'male' or 'female'
+    - measureOne: measurement from location 1
+    - measureTwo: measurement from location 2
+    - measureThree: measurement from location 3
+
+    Returns:
+    - bf_percent: body fat percentage using skinfold
+"""
+def calculate_body_fat_skinfold(gender, measureOne, measureTwo, measureThree):
+    
+    if gender.lower() == 'male':
+        #Measurement locations: Chest, abdominal, thigh
+        sum_skinfold = measureOne + measureTwo + measureThree
+        body_density = (1.10938 - ((0.0008267 * sum_skinfold) + (0.0000016 * (sum_skinfold ** 2)) - (0.0002574 * age)))
+        bf_percent_brozek = ((4.570/body_density) - 4.142) * 100
+    elif gender.lower() == 'female':
+        #Measurement: Tricep, suprailiac, thigh
+        sum_skinfold = measureOne + measureTwo + measureThree
+        body_density = (1.0994921 - ((0.0009929 * sum_skinfold) + (0.0000023* (sum_skinfold**2)) - (0.0001392 * age)))
+        bf_percent_brozek = ((4.570/body_density) - 4.142) * 100
+    return bf_percent_brozek
+
+"""
     Calculate the Daily Caloric Expenditure (DCE) based on activity level.
 
     Parameters:
@@ -31,6 +68,8 @@ def calculate_dce(rmr, activity_level):
     Returns:
     - dce: Daily Caloric Expenditure in calories/day
     """
+def calculate_dce(rmr, activity_level):
+    
     activity_factors = {
         'sedentary': 1.2,
         'light': 1.375,
@@ -49,13 +88,20 @@ def calculate_dce(rmr, activity_level):
 
 # Example usage
 gender = input("Enter gender (male/female): ").strip()
-weight_kg = float(input("Enter weight in kilograms: ").strip())
+weight_kg = float(input("Enter weight in pounds: ").strip())
 height_cm = float(input("Enter height in centimeters: ").strip())
 age = int(input("Enter age in years: ").strip())
 activity_level = input("Enter activity level (sedentary, light, moderate, very, super): ").strip()
+print("Measurement Location for Men: Chest, Abdominal, Thigh \n Measure Location for Women: Tricep, Suprailiac, Thigh")
+measureOne = float(input("Enter measurement one: ").strip())
+measureTwo = float(input("Enter measurement two: ").strip())
+measureThree = float(input("Enter measurement three: ").strip())
+
 
 rmr = calculate_rmr(gender, weight_kg, height_cm, age)
 dce = calculate_dce(rmr, activity_level)
+bf_percent = calculate_body_fat_skinfold (age, measureOne, measureTwo, measureTwo)
 
 print(f"Resting Metabolic Rate (RMR): {rmr:.2f} calories/day")
 print(f"Daily Caloric Expenditure (DCE): {dce:.2f} calories/day")
+print(f"Body-Fat Percentage (Skinfold): {bf_percent:.2f} %")
