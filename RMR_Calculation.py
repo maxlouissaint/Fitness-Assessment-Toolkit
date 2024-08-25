@@ -1,3 +1,9 @@
+'''
+Being in a calorie deficit of 500 cal/day for one week will total 3500 cal/week.
+3500 cal/week is the total amount to lose about 0.5 to 1lb of body weight. Will lose a mixture of fat, water, and muscle
+
+'''
+
 #convert pound to kilogram - return weight in kilogram
 def convert_poundToKilogram(weight_lbs):
     return weight_lbs / 2.2046
@@ -44,7 +50,7 @@ def calculate_rmr(gender, weight_lbs, height_in, age):
     Returns:
     - bf_percent: body fat percentage using skinfold
 """
-def calculate_body_fat_skinfold(gender, measureOne, measureTwo, measureThree):
+def calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThree):
     
     if gender.lower() == 'male':
         #Measurement locations: Chest, abdominal, thigh
@@ -54,7 +60,7 @@ def calculate_body_fat_skinfold(gender, measureOne, measureTwo, measureThree):
     elif gender.lower() == 'female':
         #Measurement: Tricep, suprailiac, thigh
         sum_skinfold = measureOne + measureTwo + measureThree
-        body_density = (1.0994921 - ((0.0009929 * sum_skinfold) + (0.0000023* (sum_skinfold**2)) - (0.0001392 * age)))
+        body_density = (1.0994921 - ((0.0009929 * sum_skinfold) + (0.0000023 * (sum_skinfold ** 2)) - (0.0001392 * age)))
         bf_percent_brozek = ((4.570/body_density) - 4.142) * 100
     return bf_percent_brozek
 
@@ -89,19 +95,18 @@ def calculate_dce(rmr, activity_level):
 # Example usage
 gender = input("Enter gender (male/female): ").strip()
 weight_kg = float(input("Enter weight in pounds: ").strip())
-height_cm = float(input("Enter height in centimeters: ").strip())
+height_cm = float(input("Enter height in inches: ").strip())
 age = int(input("Enter age in years: ").strip())
 activity_level = input("Enter activity level (sedentary, light, moderate, very, super): ").strip()
-print("Measurement Location for Men: Chest, Abdominal, Thigh \n Measure Location for Women: Tricep, Suprailiac, Thigh")
-measureOne = float(input("Enter measurement one: ").strip())
-measureTwo = float(input("Enter measurement two: ").strip())
-measureThree = float(input("Enter measurement three: ").strip())
-
 
 rmr = calculate_rmr(gender, weight_kg, height_cm, age)
 dce = calculate_dce(rmr, activity_level)
-bf_percent = calculate_body_fat_skinfold (age, measureOne, measureTwo, measureTwo)
-
 print(f"Resting Metabolic Rate (RMR): {rmr:.2f} calories/day")
 print(f"Daily Caloric Expenditure (DCE): {dce:.2f} calories/day")
+
+print("Calculate body fat percentage using skinfold \n Measurement Location for Men: Chest, Abdominal, Thigh \n Measure Location for Women: Tricep, Suprailiac, Thigh")
+measureOne = float(input("Enter measurement one: ").strip())
+measureTwo = float(input("Enter measurement two: ").strip())
+measureThree = float(input("Enter measurement three: ").strip())
+bf_percent = calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThree)
 print(f"Body-Fat Percentage (Skinfold): {bf_percent:.2f} %")
