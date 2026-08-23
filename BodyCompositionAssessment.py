@@ -17,20 +17,85 @@ from Utils import * # import conversion functions
     - bf_percent: body fat percentage using skinfold
 """
 def calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThree):
-    sum_skinfold = measureOne + measureTwo + measureThree
-    if gender.lower() == 'male':
-        #Measurement locations: Chest, abdominal, thigh
-        body_density = (1.10938 - ((0.0008267 * sum_skinfold) + (0.0000016 * (sum_skinfold ** 2)) - (0.0002574 * age)))
-        # bf_percent_brozek = ((4.570/body_density) - 4.142) * 100
-    elif gender.lower() == 'female':
-        #Measurement: Tricep, suprailiac, thigh
-        # sum_skinfold = measureOne + measureTwo + measureThree
-        body_density = (1.0994921 - ((0.0009929 * sum_skinfold) + (0.0000023 * (sum_skinfold ** 2)) - (0.0001392 * age)))
-    else: 
-        raise ValueError("Invalid gender")
-    
-    bf_percent_brozek = ((4.570/body_density) - 4.142) * 100
-    return bf_percent_brozek
+    """
+    Estimate body-fat percentage using the Jackson-Pollock three-site
+    body-density equations and the Siri density-to-fat conversion.
+
+    Study age ranges:
+        male:   18-61 years
+        female: 18-55 years
+
+    Skinfold measurements are expected in millimeters.
+    """
+    gender = gender.strip().lower()
+
+    if gender not in ("male", "female"):
+        raise ValueError("Gender must be 'male' or 'female'.")
+
+    if not isinstance(age, (int, float)) or isinstance(age, bool):
+        raise ValueError("Age must be numeric.")
+
+    if not math.isfinite(age):
+        raise ValueError("Age must be finite.")
+
+    age_limits = {
+        "male": (18, 61),
+        "female": (18, 55),
+    }
+
+    minimum_age, maximum_age = age_limits[gender]
+
+    if age < minimum_age or age > maximum_age:
+        raise ValueError(
+            f"Age for the {gender} Jackson-Pollock equation must be "
+            f"between {minimum_age} and {maximum_age} years."
+        )
+
+    measurements = (measureOne, measureTwo, measureThree)
+
+    for measurement in measurements:
+        if not isinstance(measurement, (int, float)) or isinstance(measurement, bool):
+            raise ValueError("Skinfold measurements must be numeric.")
+
+        if not math.isfinite(measurement):
+            raise ValueError("Skinfold measurements must be finite.")
+
+        if measurement <= 0:
+            raise ValueError(
+                "Skinfold measurements must be greater than zero."
+            )
+
+    sum_skinfold = sum(measurements)
+
+    if gender == "male":
+        body_density = (
+            1.10938
+            - (0.0008267 * sum_skinfold)
+            + (0.0000016 * (sum_skinfold ** 2))
+            - (0.0002574 * age)
+        )
+    else:
+        body_density = (
+            1.0994921
+            - (0.0009929 * sum_skinfold)
+            + (0.0000023 * (sum_skinfold ** 2))
+            - (0.0001392 * age)
+        )
+
+    if not math.isfinite(body_density) or body_density <= 0:
+        raise ValueError(
+            "Inputs produced an invalid estimated body density."
+        )
+
+    bf_percent = ((4.95 / body_density) - 4.50) * 100
+
+    if not math.isfinite(bf_percent) or not 0 <= bf_percent <= 100:
+        raise ValueError(
+            "Inputs produced an invalid estimated body-fat percentage."
+        )
+
+    return bf_percent
+
 
 # -------------------------- Resting Metabolid Rate Calculation ------------------------------------------------
 """

@@ -1,7 +1,29 @@
 # ---------------------- 1-Rep Max Calculation ------------------------
-def calculate_1RM(weight_lifted, numOfRep):
-    estimated_percent_of_1RM = (100 - (numOfRep * 2.5)) / 100
-    return weight_lifted / estimated_percent_of_1RM #estimated 1RM
+def calculate_1RM(weight_lifted, reps):
+    """
+    Estimate one-repetition maximum using the Epley equation.
+
+    For a true single repetition, the observed weight is returned directly.
+    For sets of 2 to 10 repetitions:
+
+        estimated_1rm = weight_lifted * (1 + reps / 30)
+
+    Higher-repetition sets are rejected because 1RM prediction becomes less
+    useful as muscular endurance contributes more heavily to performance.
+    """
+    if weight_lifted <= 0:
+        raise ValueError("Weight lifted must be greater than zero.")
+
+    if not isinstance(reps, int) or isinstance(reps, bool):
+        raise ValueError("Repetitions must be an integer.")
+
+    if reps < 1 or reps > 10:
+        raise ValueError("Repetitions must be between 1 and 10.")
+
+    if reps == 1:
+        return float(weight_lifted)
+
+    return weight_lifted * (1 + reps / 30)
 
 # ---------------------- Training Intensity Ranges ----------------------------------
 # Training intensity ranges

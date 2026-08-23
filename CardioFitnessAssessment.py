@@ -42,28 +42,67 @@ def estimate_vo2_max(max_heart_rate, rest_heart_rate, gender):
 
 
 # -------------------------- Maximum Heart Rate Calculation ----------------------------------------
-def calc_max_HR(age):
-    return 220 - age
-# ----------------------- Hydration Level Calculation -------------------------------------
-def calculate_hydration(weight_kg, activity_minutes):
-    base_water = weight_kg * 0.033  # 33 ml per kg
-    extra_water = activity_minutes * 0.012  # 12 ml per minute of activity
-    return base_water + extra_water
+def estimate_max_heart_rate(age):
+    """
+    Estimate maximum heart rate using the Tanaka age-prediction equation.
+
+        estimated HRmax = 208 - (0.7 * age)
+
+    This is a population-derived estimate for healthy adults, not a measured
+    maximum heart rate. Individual values can differ substantially from the
+    prediction.
+    """
+    if not isinstance(age, (int, float)) or isinstance(age, bool):
+        raise ValueError("Age must be numeric.")
+
+    if age < 18:
+        raise ValueError(
+            "The Tanaka maximum-heart-rate estimate is intended for adults."
+        )
+
+    max_heart_rate = 208 - (0.7 * age)
+
+    if max_heart_rate <= 0:
+        raise ValueError(
+            "Age produced an invalid estimated maximum heart rate."
+        )
+
+    return max_heart_rate
 
 # ----------------------- Heart Rate Zone Calculation --------------------------------------------
 def calculate_heart_rate_zones(max_heart_rate):
+    """
+    Calculate five continuous training zones as percentages of maximum
+    heart rate.
+
+    Zone 1: 50-60%
+    Zone 2: 60-70%
+    Zone 3: 70-80%
+    Zone 4: 80-90%
+    Zone 5: 90-100%
+    """
+    if max_heart_rate <= 0:
+        raise ValueError("Maximum heart rate must be greater than zero.")
+
     zones = {
-        'Zone 1': (0.50, 0.60),
-        'Zone 2': (0.61, 0.70),
-        'Zone 3': (0.71, 0.80),
-        'Zone 4': (0.81, 0.90),
-        'Zone 5': (0.91, 1.00)
+        "Zone 1": (0.50, 0.60),
+        "Zone 2": (0.60, 0.70),
+        "Zone 3": (0.70, 0.80),
+        "Zone 4": (0.80, 0.90),
+        "Zone 5": (0.90, 1.00),
     }
-    return {zone: (max_heart_rate * min_val, max_heart_rate * max_val) for zone, (min_val, max_val) in zones.items()}
+
+    return {
+        zone: (
+            max_heart_rate * min_value,
+            max_heart_rate * max_value,
+        )
+        for zone, (min_value, max_value) in zones.items()
+    }
 
 # ------------------------------ Display Heart Rate Zone -----------------------------
 def display_heart_rate_zones(age, rest_heart_rate, gender):
-    max_heart_rate = calc_max_HR(age)
+    max_heart_rate = estimate_max_heart_rate(age)
     vo2_max = estimate_vo2_max(max_heart_rate, rest_heart_rate, gender)
     heart_rate_zones = calculate_heart_rate_zones(max_heart_rate)
     
@@ -74,7 +113,7 @@ def display_heart_rate_zones(age, rest_heart_rate, gender):
 
 '''
 age = int(input("Enter age: "))
-max_heart_rate = calc_max_HR(age)
+max_heart_rate = estimate_max_heart_rate(age)
 rest_heart_rate = int(input("Enter resting heart rate:"))
 display_heart_rate_zones(age, rest_heart_rate)
 '''
