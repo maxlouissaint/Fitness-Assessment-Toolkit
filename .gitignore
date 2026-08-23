@@ -1,0 +1,6 @@
+.DS_Store
+assessment_results.json
+__pycache__/
+*.py[cod]
+.venv/
+venv/
