@@ -1,7 +1,45 @@
 # Measure resting heart rate (RHR)
 # --------------- Heart Rate Baed V02_max -------------------------------------------
-def calculate_vo2_max(max_heart_rate, rest_heart_rate):
-    return max_heart_rate / rest_heart_rate #returns estimated VO2_max
+def estimate_vo2_max(max_heart_rate, rest_heart_rate, gender):
+    """
+    Estimate mass-specific VO2 max using the Heart Rate Ratio Method.
+
+    Published proportionality factors used by this implementation:
+        male:   15.3
+        female: 14.5
+
+    The estimate is calculated as:
+
+        VO2 max = proportionality_factor * (HRmax / HRrest)
+
+    These factors were derived from trained study populations. The result is
+    therefore an indirect fitness estimate, not a direct VO2 max measurement,
+    and accuracy can vary by population.
+
+    Returns:
+        Estimated VO2 max in mL/kg/min.
+    """
+    if max_heart_rate <= 0:
+        raise ValueError("Maximum heart rate must be greater than zero.")
+
+    if rest_heart_rate <= 0:
+        raise ValueError("Resting heart rate must be greater than zero.")
+
+    if rest_heart_rate >= max_heart_rate:
+        raise ValueError("Resting heart rate must be lower than maximum heart rate.")
+
+    factors = {
+        "male": 15.3,
+        "female": 14.5,
+    }
+
+    gender = gender.strip().lower()
+
+    if gender not in factors:
+        raise ValueError("Gender must be 'male' or 'female'.")
+
+    return factors[gender] * (max_heart_rate / rest_heart_rate)
+
 
 # -------------------------- Maximum Heart Rate Calculation ----------------------------------------
 def calc_max_HR(age):
@@ -24,12 +62,12 @@ def calculate_heart_rate_zones(max_heart_rate):
     return {zone: (max_heart_rate * min_val, max_heart_rate * max_val) for zone, (min_val, max_val) in zones.items()}
 
 # ------------------------------ Display Heart Rate Zone -----------------------------
-def display_heart_rate_zones(age, rest_heart_rate):
+def display_heart_rate_zones(age, rest_heart_rate, gender):
     max_heart_rate = calc_max_HR(age)
-    vo2_max = calculate_vo2_max(max_heart_rate, rest_heart_rate)
+    vo2_max = estimate_vo2_max(max_heart_rate, rest_heart_rate, gender)
     heart_rate_zones = calculate_heart_rate_zones(max_heart_rate)
     
-    print(f"VO2 Max: {vo2_max:.2f}")
+    print(f"Estimated VO2 Max: {vo2_max:.2f} mL/kg/min")
     print("Heart Rate Zones:")
     for zone, (min_hr, max_hr) in heart_rate_zones.items():
         print(f"{zone}: {min_hr:.2f} - {max_hr:.2f} bpm")

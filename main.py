@@ -21,14 +21,14 @@ def main():
     dce = calculate_dce(rmr, activity_level)
     bf_percent = calculate_body_fat_skinfold(gender, age, 10, 20, 30)  # Replace with actual measurements
     max_heart_rate = calc_max_HR(age)
-    vo2_max = calculate_vo2_max(max_heart_rate, rest_heart_rate)
+    vo2_max = estimate_vo2_max(max_heart_rate, rest_heart_rate, gender)
     heart_rate_zones = calculate_heart_rate_zones(max_heart_rate)
     estimated_1rm = calculate_1RM(200, 8)  # Replace with user inputs
 
     # Display results
     print(f"RMR: {rmr:.2f} cal/day, DCE: {dce:.2f} cal/day")
     print(f"Body Fat Percentage: {bf_percent:.2f}%")
-    display_heart_rate_zones(age, rest_heart_rate)
+    display_heart_rate_zones(age, rest_heart_rate, gender)
     display_training_goals(200, 8)  # Replace with actual weight and reps
 
     # Save results
@@ -36,7 +36,7 @@ def main():
         "RMR": rmr,
         "DCE": dce,
         "Body Fat %": bf_percent,
-        "VO2 Max": vo2_max,
+        "Estimated VO2 Max (mL/kg/min)": vo2_max,
         "Heart Rate Zones": heart_rate_zones,
         "Estimated 1RM": estimated_1rm,
     }
