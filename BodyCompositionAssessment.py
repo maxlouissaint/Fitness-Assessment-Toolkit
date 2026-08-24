@@ -1,7 +1,7 @@
 
 # Import necessary modules
 import math
-from Utils import * # import conversion functions
+from Utils import inches_to_centimeters, pounds_to_kilograms # import conversion functions
 
 # ---------------------------- Skinfold Body Fat Calculation --------------------------------------
 """
@@ -148,8 +148,8 @@ def estimate_rmr(gender, weight_lbs, height_in, age):
         if value <= 0:
             raise ValueError(f"{name.capitalize()} must be greater than zero.")
 
-    height_cm = convert_Inches2Centimeters(height_in)
-    weight_kg = convert_Pound2Kilo(weight_lbs)
+    height_cm = inches_to_centimeters(height_in)
+    weight_kg = pounds_to_kilograms(weight_lbs)
 
     if gender == "male":
         rmr = (

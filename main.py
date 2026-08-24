@@ -1,7 +1,19 @@
-from BodyCompositionAssessment import *
-from CardioFitnessAssessment import *
-from StrengthAndEnduranceAssessment import *
-from DataManipulation import *
+from BodyCompositionAssessment import (
+    calculate_body_fat_skinfold,
+    estimate_rmr,
+    estimate_tdee,
+)
+from CardioFitnessAssessment import (
+    calculate_heart_rate_zones,
+    display_heart_rate_zones,
+    estimate_max_heart_rate,
+    estimate_vo2_max,
+)
+from DataManipulation import save_to_file
+from StrengthAndEnduranceAssessment import (
+    calculate_1RM,
+    display_training_goals,
+)
 
 def collect_user_input():
     age = int(input("Enter age: "))
