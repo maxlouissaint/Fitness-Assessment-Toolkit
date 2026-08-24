@@ -110,10 +110,3 @@ def display_heart_rate_zones(age, rest_heart_rate, gender):
     print("Heart Rate Zones:")
     for zone, (min_hr, max_hr) in heart_rate_zones.items():
         print(f"{zone}: {min_hr:.2f} - {max_hr:.2f} bpm")
-
-'''
-age = int(input("Enter age: "))
-max_heart_rate = estimate_max_heart_rate(age)
-rest_heart_rate = int(input("Enter resting heart rate:"))
-display_heart_rate_zones(age, rest_heart_rate)
-'''

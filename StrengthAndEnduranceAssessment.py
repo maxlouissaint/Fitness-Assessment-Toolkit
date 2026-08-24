@@ -1,5 +1,5 @@
 # ---------------------- 1-Rep Max Calculation ------------------------
-def calculate_1RM(weight_lifted, reps):
+def estimate_one_rep_max(weight_lifted, reps):
     """
     Estimate one-repetition maximum using the Epley equation.
 
@@ -39,12 +39,10 @@ def calculate_training_intensities(estimated_1rm):
 
 # ------------------------- Display Training Goals -----------------------------
 def display_training_goals(weight_lifted, reps):
-    estimated_1rm = calculate_1RM(weight_lifted, reps)
+    estimated_1rm = estimate_one_rep_max(weight_lifted, reps)
     print(f"Estimated 1RM: {estimated_1rm:.2f} lbs")
     
     training_intensities = calculate_training_intensities(estimated_1rm)
     print("Training Intensity Ranges:")
     for goal, (min_weight, max_weight) in training_intensities.items():
         print(f"{goal}: {min_weight:.2f} - {max_weight:.2f} lbs")
-
-# display_training_goals(10, 5)

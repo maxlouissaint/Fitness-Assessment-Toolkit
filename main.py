@@ -11,7 +11,7 @@ from CardioFitnessAssessment import (
 )
 from DataManipulation import save_to_file
 from StrengthAndEnduranceAssessment import (
-    calculate_1RM,
+    estimate_one_rep_max,
     display_training_goals,
 )
 
@@ -77,7 +77,6 @@ def main():
         reps,
     ) = collect_user_input()
 
-    # Perform assessments -------- use a switch statement
     rmr = estimate_rmr(gender, weight, height, age)
     tdee = estimate_tdee(rmr, pal)
     bf_percent = calculate_body_fat_skinfold(
@@ -90,7 +89,7 @@ def main():
     max_heart_rate = estimate_max_heart_rate(age)
     vo2_max = estimate_vo2_max(max_heart_rate, rest_heart_rate, gender)
     heart_rate_zones = calculate_heart_rate_zones(max_heart_rate)
-    estimated_1rm = calculate_1RM(weight_lifted, reps)
+    estimated_1rm = estimate_one_rep_max(weight_lifted, reps)
 
     # Display results
     print(f"Estimated RMR: {rmr:.2f} kcal/day")

@@ -9,14 +9,14 @@ from Utils import inches_to_centimeters, pounds_to_kilograms # import conversion
     
     Parameters:
     - gender: 'male' or 'female'
-    - measureOne: measurement from location 1
-    - measureTwo: measurement from location 2
-    - measureThree: measurement from location 3
+    - measure_one: measurement from location 1
+    - measure_two: measurement from location 2
+    - measure_three: measurement from location 3
 
     Returns:
     - bf_percent: body fat percentage using skinfold
 """
-def calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThree):
+def calculate_body_fat_skinfold(gender, age, measure_one, measure_two, measure_three):
     """
     Estimate body-fat percentage using the Jackson-Pollock three-site
     body-density equations and the Siri density-to-fat conversion.
@@ -51,7 +51,7 @@ def calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThre
             f"between {minimum_age} and {maximum_age} years."
         )
 
-    measurements = (measureOne, measureTwo, measureThree)
+    measurements = (measure_one, measure_two, measure_three)
 
     for measurement in measurements:
         if not isinstance(measurement, (int, float)) or isinstance(measurement, bool):
