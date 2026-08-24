@@ -62,7 +62,7 @@ def main():
     ) = collect_user_input()
 
     # Perform assessments -------- use a switch statement
-    rmr = calculate_rmr(gender, weight, height, age)
+    rmr = estimate_rmr(gender, weight, height, age)
     dce = calculate_dce(rmr, activity_level)
     bf_percent = calculate_body_fat_skinfold(
         gender,

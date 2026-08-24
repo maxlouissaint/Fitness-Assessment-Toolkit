@@ -110,19 +110,69 @@ def calculate_body_fat_skinfold(gender, age, measureOne, measureTwo, measureThre
     Returns:
     - rmr: Resting Metabolic Rate in calories/day
     """
-def calculate_rmr(gender, weight_lbs, height_in, age):
-    
+def estimate_rmr(gender, weight_lbs, height_in, age):
+    """
+    Estimate resting metabolic rate using the revised Harris-Benedict
+    equations published by Roza and Shizgal (1984).
+
+    Inputs:
+        gender: "male" or "female"
+        weight_lbs: body weight in pounds
+        height_in: height in inches
+        age: age in years
+
+    Returns:
+        Estimated resting energy expenditure in kcal/day.
+
+    This is a population-derived estimate, not a direct metabolic
+    measurement.
+    """
+    gender = gender.strip().lower()
+
+    if gender not in ("male", "female"):
+        raise ValueError("Gender must be 'male' or 'female'.")
+
+    values = {
+        "weight": weight_lbs,
+        "height": height_in,
+        "age": age,
+    }
+
+    for name, value in values.items():
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"{name.capitalize()} must be numeric.")
+
+        if not math.isfinite(value):
+            raise ValueError(f"{name.capitalize()} must be finite.")
+
+        if value <= 0:
+            raise ValueError(f"{name.capitalize()} must be greater than zero.")
+
     height_cm = convert_Inches2Centimeters(height_in)
     weight_kg = convert_Pound2Kilo(weight_lbs)
 
-    if gender.lower() == 'male':
-        rmr = 88.362 + (13.397 * weight_kg) + (4.799 * height_cm) - (5.677 * age)
-    elif gender.lower() == 'female':
-        rmr = 447.593 + (9.247 * weight_kg) + (3.098 * height_cm) - (4.330 * age)
+    if gender == "male":
+        rmr = (
+            88.362
+            + (13.397 * weight_kg)
+            + (4.799 * height_cm)
+            - (5.677 * age)
+        )
     else:
-        raise ValueError("Gender must be 'male' or 'female'")
+        rmr = (
+            447.593
+            + (9.247 * weight_kg)
+            + (3.098 * height_cm)
+            - (4.330 * age)
+        )
+
+    if not math.isfinite(rmr) or rmr <= 0:
+        raise ValueError(
+            "Inputs produced an invalid resting metabolic rate estimate."
+        )
 
     return rmr
+
 
 # ---------------------- Daily Caloric Exxpenditure Calculation ----------------------------------
 """
