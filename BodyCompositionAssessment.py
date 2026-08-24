@@ -174,29 +174,51 @@ def estimate_rmr(gender, weight_lbs, height_in, age):
     return rmr
 
 
-# ---------------------- Daily Caloric Exxpenditure Calculation ----------------------------------
-"""
-    Calculate the Daily Caloric Expenditure (DCE) based on activity level.
+# ---------------------- Total Daily Energy Expenditure ----------------------
 
-    Parameters:
-    - rmr: Resting Metabolic Rate in calories/day
-    - activity_level: activity level ('sedentary', 'light', 'moderate', 'very', 'super')
+def estimate_tdee(rmr, pal):
+    """
+    Estimate total daily energy expenditure from resting metabolic rate
+    and Physical Activity Level (PAL).
+
+        estimated TDEE = RMR * PAL
+
+    PAL represents total daily energy expenditure as a multiple of resting
+    energy expenditure.
+
+    Habitual adult lifestyle ranges used as guidance:
+        1.40-1.69: sedentary or light activity
+        1.70-1.99: active or moderately active
+        2.00-2.40: vigorous or vigorously active
 
     Returns:
-    - dce: Daily Caloric Expenditure in calories/day
+        Estimated total daily energy expenditure in kcal/day.
     """
-def calculate_dce(rmr, activity_level):
-    
-    activity_factors = {
-        'sedentary': 1.2,
-        'light': 1.375,
-        'moderate': 1.55,
-        'very': 1.725,
-        'super': 1.9
-    }
+    if not isinstance(rmr, (int, float)) or isinstance(rmr, bool):
+        raise ValueError("RMR must be numeric.")
 
-    if activity_level.lower() not in activity_factors:
-        raise ValueError("Activity level must be one of 'sedentary', 'light', 'moderate', 'very', or 'super'")
+    if not math.isfinite(rmr):
+        raise ValueError("RMR must be finite.")
 
-    dce = rmr * activity_factors[activity_level.lower()]
-    return dce
+    if rmr <= 0:
+        raise ValueError("RMR must be greater than zero.")
+
+    if not isinstance(pal, (int, float)) or isinstance(pal, bool):
+        raise ValueError("PAL must be numeric.")
+
+    if not math.isfinite(pal):
+        raise ValueError("PAL must be finite.")
+
+    if pal < 1.40 or pal > 2.40:
+        raise ValueError(
+            "PAL must be between 1.40 and 2.40 for this assessment."
+        )
+
+    tdee = rmr * pal
+
+    if not math.isfinite(tdee) or tdee <= 0:
+        raise ValueError(
+            "Inputs produced an invalid total daily energy expenditure estimate."
+        )
+
+    return tdee

@@ -9,9 +9,13 @@ def collect_user_input():
     weight = float(input("Enter weight (lbs): "))
     height = float(input("Enter height (inches): "))
     rest_heart_rate = int(input("Enter resting heart rate (BPM): "))
-    activity_level = input(
-        "Enter activity level (sedentary, light, moderate, very, super): "
-    ).strip().lower()
+    print(
+        "Physical Activity Level (PAL): "
+        "1.40-1.69 sedentary/light, "
+        "1.70-1.99 active/moderate, "
+        "2.00-2.40 vigorous"
+    )
+    pal = float(input("Enter PAL: "))
 
     if gender == "male":
         print("Enter skinfold measurements in millimeters:")
@@ -37,7 +41,7 @@ def collect_user_input():
         weight,
         height,
         rest_heart_rate,
-        activity_level,
+        pal,
         measure_one,
         measure_two,
         measure_three,
@@ -53,7 +57,7 @@ def main():
         weight,
         height,
         rest_heart_rate,
-        activity_level,
+        pal,
         measure_one,
         measure_two,
         measure_three,
@@ -63,7 +67,7 @@ def main():
 
     # Perform assessments -------- use a switch statement
     rmr = estimate_rmr(gender, weight, height, age)
-    dce = calculate_dce(rmr, activity_level)
+    tdee = estimate_tdee(rmr, pal)
     bf_percent = calculate_body_fat_skinfold(
         gender,
         age,
@@ -77,15 +81,18 @@ def main():
     estimated_1rm = calculate_1RM(weight_lifted, reps)
 
     # Display results
-    print(f"RMR: {rmr:.2f} cal/day, DCE: {dce:.2f} cal/day")
+    print(f"Estimated RMR: {rmr:.2f} kcal/day")
+    print(f"PAL: {pal:.2f}")
+    print(f"Estimated TDEE: {tdee:.2f} kcal/day")
     print(f"Body Fat Percentage: {bf_percent:.2f}%")
     display_heart_rate_zones(age, rest_heart_rate, gender)
     display_training_goals(weight_lifted, reps)
 
     # Save results
     results = {
-        "RMR": rmr,
-        "DCE": dce,
+        "Estimated RMR (kcal/day)": rmr,
+        "Physical Activity Level (PAL)": pal,
+        "Estimated TDEE (kcal/day)": tdee,
         "Body Fat %": bf_percent,
         "Estimated VO2 Max (mL/kg/min)": vo2_max,
         "Heart Rate Zones": heart_rate_zones,
