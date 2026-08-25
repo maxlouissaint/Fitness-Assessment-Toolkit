@@ -9,13 +9,15 @@ from CardioFitnessAssessment import (
     estimate_max_heart_rate,
     estimate_vo2_max,
 )
-from DataManipulation import save_to_file
+from datetime import datetime
+from DataManipulation import add_assessment
 from StrengthAndEnduranceAssessment import (
     estimate_one_rep_max,
     display_training_goals,
 )
 
 def collect_user_input():
+    client_id = input("Enter client ID: ").strip()
     age = int(input("Enter age: "))
     gender = input("Enter gender (male/female): ").strip().lower()
     weight = float(input("Enter weight (lbs): "))
@@ -48,6 +50,7 @@ def collect_user_input():
     reps = int(input("Enter repetitions completed: "))
 
     return (
+        client_id,
         age,
         gender,
         weight,
@@ -64,6 +67,7 @@ def collect_user_input():
 def main():
     # Collect inputs
     (
+        client_id,
         age,
         gender,
         weight,
@@ -100,16 +104,44 @@ def main():
     display_training_goals(weight_lifted, reps)
 
     # Save results
-    results = {
-        "Estimated RMR (kcal/day)": rmr,
-        "Physical Activity Level (PAL)": pal,
-        "Estimated TDEE (kcal/day)": tdee,
-        "Body Fat %": bf_percent,
-        "Estimated VO2 Max (mL/kg/min)": vo2_max,
-        "Heart Rate Zones": heart_rate_zones,
-        "Estimated 1RM": estimated_1rm,
+    if gender == "male":
+        skinfolds = {
+            "chest": measure_one,
+            "abdominal": measure_two,
+            "thigh": measure_three,
+        }
+    else:
+        skinfolds = {
+            "triceps": measure_one,
+            "suprailiac": measure_two,
+            "thigh": measure_three,
+        }
+
+    assessment = {
+        "timestamp": datetime.now().astimezone().isoformat(),
+        "inputs": {
+            "age": age,
+            "gender": gender,
+            "weight_lbs": weight,
+            "height_in": height,
+            "resting_hr_bpm": rest_heart_rate,
+            "pal": pal,
+            "skinfolds_mm": skinfolds,
+            "weight_lifted_lbs": weight_lifted,
+            "repetitions": reps,
+        },
+        "results": {
+            "estimated_rmr_kcal_day": rmr,
+            "estimated_tdee_kcal_day": tdee,
+            "body_fat_percent": bf_percent,
+            "estimated_max_heart_rate_bpm": max_heart_rate,
+            "estimated_vo2_max_ml_kg_min": vo2_max,
+            "heart_rate_zones_bpm": heart_rate_zones,
+            "estimated_1rm_lbs": estimated_1rm,
+        },
     }
-    save_to_file(results)
+
+    add_assessment(client_id, assessment)
 
 if __name__ == "__main__":
     main()
